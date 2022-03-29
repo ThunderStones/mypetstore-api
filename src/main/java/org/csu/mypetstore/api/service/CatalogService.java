@@ -8,13 +8,16 @@ import org.csu.mypetstore.api.vo.ItemVO;
 import java.util.List;
 
 public interface CatalogService {
-    CommonResponse<List<Category>> getCategoryList();
+    List<Category> getCategoryList();
+    Category getCategory(String categoryId);
 
-    CommonResponse<Category> getCategory(String categoryId);
+    List<Product> getProductListByCategoryId(String categoryId);
 
-    CommonResponse<List<Product>> getProductListByCategoryId(String categoryId);
+    Product getProductById(String productId);
 
-    CommonResponse<Product> getProductById(String productId);
+    List<ItemVO> getItemsByProductId(String productId);
 
-    CommonResponse<List<ItemVO>> getItemsByProductId(String productId);
+    ItemVO getItemById(String itemId);
+
+    List<Product> searchProduct(String keywords);
 }

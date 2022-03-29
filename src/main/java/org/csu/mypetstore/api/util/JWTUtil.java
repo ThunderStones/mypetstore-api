@@ -1,7 +1,8 @@
-package org.csu.mypetstore.api.common;
+package org.csu.mypetstore.api.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
@@ -13,7 +14,7 @@ import java.util.Objects;
 public class JWTUtil {
     private static final String SECRET = "mypetstore";
     private static final String ISS = "mypetstore";
-    private static final int EXPIRE_TIME = 60 * 60 * 1000;
+    private static final int EXPIRE_TIME = 24 * 60 * 60 * 1000;
 
     public static String createToken(String username) {
         return createToken(username, EXPIRE_TIME);
@@ -35,13 +36,10 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
-    private static Map<String, Claim> verifyToken(String token) {
+    private static Map<String, Claim> verifyToken(String token) throws TokenExpiredException {
         DecodedJWT jwt = null;
-        try {
-            jwt = JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        jwt = JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
+
         return jwt == null ? null : jwt.getClaims();
     }
 

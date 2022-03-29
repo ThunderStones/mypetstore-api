@@ -1,7 +1,7 @@
-package org.csu.mypetstore.api.controller.front;
+package org.csu.mypetstore.api.controller.interceptor;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
@@ -11,8 +11,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(authenticationInterceptor())
                 .addPathPatterns("/**");
     }
-
-    private JwtAuthenticationInterceptor authenticationInterceptor() {
+    @Bean
+    public JwtAuthenticationInterceptor authenticationInterceptor() {
         return new JwtAuthenticationInterceptor();
     }
 }

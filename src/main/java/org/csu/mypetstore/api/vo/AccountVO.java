@@ -1,11 +1,11 @@
 package org.csu.mypetstore.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class AccountVO {
     private String username;
-    private String password;
     private String email;
     private String firstName;
     private String lastName;

@@ -1,4 +1,4 @@
-package org.csu.mypetstore.api.controller.front;
+package org.csu.mypetstore.api.controller.filter;
 
 import org.springframework.context.annotation.Configuration;
 

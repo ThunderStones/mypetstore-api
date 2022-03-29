@@ -14,6 +14,7 @@ import org.csu.mypetstore.api.service.AccountService;
 import org.csu.mypetstore.api.vo.AccountVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("AccountService")
 public class AccountServiceImpl implements AccountService {
@@ -27,27 +28,30 @@ public class AccountServiceImpl implements AccountService {
     private SignOnMapper signOnMapper;
 
     @Override
-    public CommonResponse<AccountVO> getAccount(String username, String password) {
-        QueryWrapper<SignOn> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", username);
-        queryWrapper.eq("password", password);
-        SignOn signOn = signOnMapper.selectOne(queryWrapper);
+    public AccountVO getAccount(String username, String password) {
+        SignOn signOn = signOn(username, password);
         if (signOn == null) {
-            return CommonResponse.createForSuccessMessage("Incorrect Username Or Password");
+            return null;
         }
         return getAccount(username);
     }
 
+    private SignOn signOn(String username, String password) {
+        QueryWrapper<SignOn> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        queryWrapper.eq("password", password);
+        return signOnMapper.selectOne(queryWrapper);
+    }
+
     @Override
-    public CommonResponse<AccountVO> getAccount(String username) {
+    public AccountVO getAccount(String username) {
         Account account = accountMapper.selectById(username);
         Profile profile = profileMapper.selectById(username);
         BannerData bannerData = bannerDataMapper.selectById(profile.getFavouriteCategoryId());
         if (account == null) {
-            return CommonResponse.createForSuccessMessage("Can not Find User " + username);
+            return null;
         }
-        AccountVO accountVO = entityToAccountVO(account, profile, bannerData);
-        return CommonResponse.createForSuccess(accountVO);
+        return entityToAccountVO(account, profile, bannerData);
     }
 
     private AccountVO entityToAccountVO(Account account, Profile profile, BannerData bannerData) {
@@ -72,5 +76,61 @@ public class AccountServiceImpl implements AccountService {
             accountVO.setBannerName(bannerData.getBannerName());
         }
         return accountVO;
+    }
+
+    @Override
+    public boolean userExist(String username) {
+        return accountMapper.selectById(username) != null;
+    }
+
+    @Override
+    @Transactional
+    public void register(String username, String password) {
+        Account account = new Account();
+        SignOn signOn = new SignOn();
+        Profile profile = new Profile();
+        account.setUsername(username);
+        signOn.setUsername(username);
+        signOn.setPassword(password);
+        profile.setUsername(username);
+        accountMapper.insert(account);
+        signOnMapper.insert(signOn);
+        profileMapper.insert(profile);
+    }
+
+    @Override
+    @Transactional
+    public void updateAccount(AccountVO accountVO) {
+        Account account = accountMapper.selectById(accountVO.getUsername());
+        Profile profile = profileMapper.selectById(accountVO.getUsername());
+        accountVOToAccountProfile(accountVO, account, profile);
+        accountMapper.updateById(account);
+        profileMapper.updateById(profile);
+    }
+
+    @Override
+    public void updatePassword(SignOn signOn) {
+        signOnMapper.updateById(signOn);
+    }
+
+    private void accountVOToAccountProfile(AccountVO accountVO, Account account, Profile profile) {
+        // if field is null, then use the original value
+        account.setEmail(accountVO.getEmail() == null ? account.getEmail() : accountVO.getEmail());
+        account.setFirstName(accountVO.getFirstName() == null ? account.getFirstName() : accountVO.getFirstName());
+        account.setLastName(accountVO.getLastName() == null ? account.getLastName() : accountVO.getLastName());
+        account.setEmail(accountVO.getEmail() == null ? account.getEmail() : accountVO.getEmail());
+        account.setAddress1(accountVO.getAddress1() == null ? account.getAddress1() : accountVO.getAddress1());
+        account.setAddress2(accountVO.getAddress2() == null ? account.getAddress2() : accountVO.getAddress2());
+        account.setCity(accountVO.getCity() == null ? account.getCity() : accountVO.getCity());
+        account.setState(accountVO.getState() == null ? account.getState() : accountVO.getState());
+        account.setZip(accountVO.getZip() == null ? account.getZip() : accountVO.getZip());
+        account.setCountry(accountVO.getCountry() == null ? account.getCountry() : accountVO.getCountry());
+        account.setPhone(accountVO.getPhone() == null ? account.getPhone() : accountVO.getPhone());
+        account.setState(accountVO.getState() == null ? account.getState() : accountVO.getState());
+
+        profile.setLanguagePreference(accountVO.getLanguagePreference() == null ? profile.getLanguagePreference() : accountVO.getLanguagePreference());
+        profile.setFavouriteCategoryId(accountVO.getFavouriteCategoryId() == null ? profile.getFavouriteCategoryId() : accountVO.getFavouriteCategoryId());
+        profile.setListOption(accountVO.isListOption() ? 1 : 0);
+        profile.setBannerOption(accountVO.isBannerOption() ? 1 : 0);
     }
 }

@@ -34,56 +34,54 @@ public class CatalogServiceImpl implements CatalogService {
     private InventoryMapper inventoryMapper;
 
     @Override
-    public CommonResponse<Category> getCategory(String categoryId) {
-        Category category = categoryMapper.selectById(categoryId);
-        if (category == null) {
-            return CommonResponse.createForSuccessMessage("No Such Category With Id " + categoryId);
-        }
-        return CommonResponse.createForSuccess(category);
+    public Category getCategory(String categoryId) {
+        return categoryMapper.selectById(categoryId);
     }
 
     @Override
-    public CommonResponse<List<Product>> getProductListByCategoryId(String categoryId) {
+    public List<Product> getProductListByCategoryId(String categoryId) {
         QueryWrapper<Product> productQueryWrapper = new QueryWrapper<>();
         productQueryWrapper.eq("category", categoryId);
-        List<Product> productList = productMapper.selectList(productQueryWrapper);
-        if (productList.isEmpty()) {
-            return CommonResponse.createForSuccessMessage("No Product In " + categoryId);
-        }
-        return CommonResponse.createForSuccess(productList);
+        return productMapper.selectList(productQueryWrapper);
     }
 
     @Override
-    public CommonResponse<List<Category>> getCategoryList() {
-        List<Category> categoryList = categoryMapper.selectList(null);
-        if (categoryList.isEmpty()) {
-            return CommonResponse.createForSuccessMessage("No Category Found");
-        }
-        return CommonResponse.createForSuccess(categoryList);
+    public List<Category> getCategoryList() {
+        return categoryMapper.selectList(null);
     }
 
     @Override
-    public CommonResponse<Product> getProductById(String productId) {
-        Product product = productMapper.selectById(productId);
-        if (product == null) {
-            return CommonResponse.createForSuccessMessage("No Product Found");
-        }
-        return CommonResponse.createForSuccess(product);
+    public Product getProductById(String productId) {
+        return productMapper.selectById(productId);
     }
 
     @Override
-    public CommonResponse<List<ItemVO>> getItemsByProductId(String productId) {
+    public List<ItemVO> getItemsByProductId(String productId) {
         QueryWrapper<Item> itemQueryWrapper = new QueryWrapper<>();
         itemQueryWrapper.eq("productid", productId);
         List<Item> itemList = itemMapper.selectList(itemQueryWrapper);
-        if (itemList.isEmpty()) {
-            return CommonResponse.createForSuccessMessage("No Item Found");
-        }
         List<ItemVO> itemVOList = new ArrayList<>();
         for (Item item: itemList) {
             itemVOList.add(itemToItemVO(item));
         }
-        return CommonResponse.createForSuccess(itemVOList);
+        return itemVOList;
+    }
+
+    @Override
+    public ItemVO getItemById(String itemId) {
+        Item item = itemMapper.selectById(itemId);
+        return itemToItemVO(item);
+    }
+
+    @Override
+    public List<Product> searchProduct(String keywords) {
+        List<Product> productList = new ArrayList<>();
+        QueryWrapper<Product> productQueryWrapper = new QueryWrapper<>();
+        for (String keyword : keywords.split("\\s+")) {
+            productQueryWrapper.like("name", keyword).or().like("descn", keyword);
+            productList.addAll(productMapper.selectList(productQueryWrapper));
+        }
+        return productList;
     }
 
     private ItemVO itemToItemVO(Item item) {
