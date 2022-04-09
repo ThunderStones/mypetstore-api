@@ -15,4 +15,6 @@ public interface AccountService {
     void updateAccount(AccountVO accountVO);
 
     void updatePassword(SignOn signOn);
+
+    boolean exist(String username);
 }

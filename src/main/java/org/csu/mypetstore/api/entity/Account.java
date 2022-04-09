@@ -19,16 +19,6 @@ public class Account {
     private String lastName;
     @TableField(value = "status")
     private String status;
-    @TableField(value = "addr1")
-    private String address1;
-    @TableField(value = "addr2")
-    private String address2;
-    @TableField(value = "city")
-    private String city;
-    @TableField(value = "state")
-    private String state;
-    @TableField(value = "zip")
-    private String zip;
     @TableField(value = "country")
     private String country;
     @TableField(value = "phone")

@@ -6,13 +6,15 @@ import org.csu.mypetstore.api.vo.CartItemVO;
 import java.util.List;
 
 public interface CartService {
-    List<CartItem> getCartItemsByUsername(String username);
+    List<CartItemVO> getCartItemsByUsername(String username);
 
     void addItem(String username, String itemId, int quantity);
 
     void removeItem(String username, String itemId);
 
     void clearCart(String username);
+
+    void clearCart(int[] cartItemIds);
 
     List<CartItem> cartItemVOToCartItem(String username, List<CartItemVO> cartItemList);
 

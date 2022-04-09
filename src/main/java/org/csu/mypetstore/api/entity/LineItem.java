@@ -21,4 +21,6 @@ public class LineItem {
     private String itemId;
     @TableField("unitprice")
     private BigDecimal unitPrice;
+
+
 }

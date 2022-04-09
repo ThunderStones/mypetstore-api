@@ -60,12 +60,7 @@ public class AccountServiceImpl implements AccountService {
         accountVO.setEmail(account.getEmail());
         accountVO.setFirstName(account.getFirstName());
         accountVO.setLastName(account.getLastName());
-        accountVO.setStatus(account.getState());
-        accountVO.setAddress1(account.getAddress1());
-        accountVO.setAddress2(account.getAddress2());
-        accountVO.setCity(account.getCity());
-        accountVO.setState(account.getState());
-        accountVO.setZip(account.getZip());
+        accountVO.setStatus(account.getStatus());
         accountVO.setCountry(account.getCountry());
         accountVO.setPhone(account.getPhone());
         accountVO.setLanguagePreference(profile.getLanguagePreference());
@@ -113,20 +108,20 @@ public class AccountServiceImpl implements AccountService {
         signOnMapper.updateById(signOn);
     }
 
+    @Override
+    public boolean exist(String username) {
+        return accountMapper.selectById(username) != null;
+    }
+
     private void accountVOToAccountProfile(AccountVO accountVO, Account account, Profile profile) {
         // if field is null, then use the original value
         account.setEmail(accountVO.getEmail() == null ? account.getEmail() : accountVO.getEmail());
         account.setFirstName(accountVO.getFirstName() == null ? account.getFirstName() : accountVO.getFirstName());
         account.setLastName(accountVO.getLastName() == null ? account.getLastName() : accountVO.getLastName());
         account.setEmail(accountVO.getEmail() == null ? account.getEmail() : accountVO.getEmail());
-        account.setAddress1(accountVO.getAddress1() == null ? account.getAddress1() : accountVO.getAddress1());
-        account.setAddress2(accountVO.getAddress2() == null ? account.getAddress2() : accountVO.getAddress2());
-        account.setCity(accountVO.getCity() == null ? account.getCity() : accountVO.getCity());
-        account.setState(accountVO.getState() == null ? account.getState() : accountVO.getState());
-        account.setZip(accountVO.getZip() == null ? account.getZip() : accountVO.getZip());
         account.setCountry(accountVO.getCountry() == null ? account.getCountry() : accountVO.getCountry());
         account.setPhone(accountVO.getPhone() == null ? account.getPhone() : accountVO.getPhone());
-        account.setState(accountVO.getState() == null ? account.getState() : accountVO.getState());
+
 
         profile.setLanguagePreference(accountVO.getLanguagePreference() == null ? profile.getLanguagePreference() : accountVO.getLanguagePreference());
         profile.setFavouriteCategoryId(accountVO.getFavouriteCategoryId() == null ? profile.getFavouriteCategoryId() : accountVO.getFavouriteCategoryId());

@@ -2,7 +2,10 @@ package org.csu.mypetstore.api.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.csu.mypetstore.api.entity.CartItem;
+import org.csu.mypetstore.api.entity.Item;
 import org.csu.mypetstore.api.persistence.CartItemMapper;
+import org.csu.mypetstore.api.persistence.InventoryMapper;
+import org.csu.mypetstore.api.persistence.ItemMapper;
 import org.csu.mypetstore.api.service.CartService;
 
 import org.csu.mypetstore.api.vo.CartItemVO;
@@ -16,13 +19,30 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
 
     @Autowired
+    private InventoryMapper inventoryMapper;
+    @Autowired
+    private ItemMapper itemMapper;
+    @Autowired
     private CartItemMapper cartItemMapper;
 
     @Override
-    public List<CartItem> getCartItemsByUsername(String username) {
+    public List<CartItemVO> getCartItemsByUsername(String username) {
         QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
-        return cartItemMapper.selectList(queryWrapper);
+        List<CartItem> cartItemList = cartItemMapper.selectList(queryWrapper);
+        List<CartItemVO> cartItemVOList = new ArrayList<>();
+        for (CartItem cartItem : cartItemList) {
+            CartItemVO cartItemVO = new CartItemVO();
+            cartItemVO.setId(cartItem.getId());
+            cartItemVO.setItemId(cartItem.getItemId());
+            cartItemVO.setQuantity(cartItem.getQuantity());
+            Item item = itemMapper.selectById(cartItem.getItemId());
+            cartItemVO.setUnitPrice(item.getListPrice());
+            cartItemVO.setInStock(inventoryMapper.selectById(item.getItemId()).getQuantity() > 0);
+            cartItemVO.calculateTotal();
+            cartItemVOList.add(cartItemVO);
+        }
+        return cartItemVOList;
     }
 
     @Override
@@ -30,7 +50,7 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = new CartItem();
         cartItem.setUsername(username);
         cartItem.setItemId(itemId);
-        cartItem.setQuantity(quantity);
+        cartItem.setQuantity(Math.min(quantity, 200));
         QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         queryWrapper.eq("itemId", itemId);
@@ -55,6 +75,13 @@ public class CartServiceImpl implements CartService {
         QueryWrapper<CartItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         cartItemMapper.delete(queryWrapper);
+    }
+
+    @Override
+    public void clearCart(int[] cartItemIds) {
+        for (int cartItemId : cartItemIds) {
+            cartItemMapper.deleteById(cartItemId);
+        }
     }
 
     @Override

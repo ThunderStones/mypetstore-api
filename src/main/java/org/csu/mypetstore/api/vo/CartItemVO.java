@@ -6,6 +6,7 @@ import org.csu.mypetstore.api.entity.Item;
 import java.math.BigDecimal;
 @Data
 public class CartItemVO {
+    private int id;
     private String itemId;
     private BigDecimal unitPrice;
     private int quantity;

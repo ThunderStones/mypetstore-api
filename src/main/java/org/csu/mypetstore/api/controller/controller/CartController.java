@@ -43,4 +43,19 @@ public class CartController {
         });
         return CommonResponse.createForSuccess("remove items success");
     }
+
+    @DeleteMapping("/items/all")
+    public CommonResponse<String> removeAllItems(HttpServletRequest request) throws IOException {
+        AccountVO account = (AccountVO) request.getAttribute("account");
+        cartService.clearCart(account.getUsername());
+        return CommonResponse.createForSuccess("remove all items success");
+    }
+
+    @GetMapping("/items")
+    public CommonResponse<List<CartItemVO>> getCartItems(HttpServletRequest request) throws IOException {
+        AccountVO account = (AccountVO) request.getAttribute("account");
+        List<CartItemVO> cartItems = cartService.getCartItemsByUsername(account.getUsername());
+        return CommonResponse.createForSuccess(cartItems);
+    }
+
 }

@@ -9,7 +9,9 @@ import lombok.Data;
 @Data
 @TableName("cartitem")
 public class CartItem {
-    @TableId(value = "username", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.AUTO)
+    private int id;
+    @TableField(value = "username")
     private String username;
     @TableField(value = "itemid")
     private String itemId;

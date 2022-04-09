@@ -5,7 +5,7 @@ import org.csu.mypetstore.api.entity.Item;
 import java.math.BigDecimal;
 import java.util.*;
 
-public class CartDTO implements java.io.Serializable {
+public class CartDTO {
     private final Map<String, CartItemDTO> itemMap = Collections.synchronizedMap(new HashMap<>());
     private final List<CartItemDTO> itemList = new ArrayList<>();
 

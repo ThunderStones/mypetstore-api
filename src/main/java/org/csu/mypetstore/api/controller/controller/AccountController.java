@@ -1,5 +1,7 @@
 package org.csu.mypetstore.api.controller.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.csu.mypetstore.api.annotation.PassToken;
 import org.csu.mypetstore.api.common.CommonResponse;
 import org.csu.mypetstore.api.util.JWTUtil;
@@ -32,13 +34,14 @@ public class AccountController {
         return CommonResponse.createForError(ResponseCode.ERROR.getCode(), "Username Or Password Error");
     }
 
-    @PostMapping("/info")
+    @GetMapping("/info")
     public CommonResponse<AccountVO> getLoginAccount(HttpServletRequest request) {
         AccountVO accountVO = (AccountVO) request.getAttribute("account");
         System.out.println(accountVO.getUsername());
         return CommonResponse.createForSuccess(accountVO);
     }
 
+    //Register
     @PostMapping("/user")
     @PassToken
     public CommonResponse<String> getAccount(String username, String password) {
@@ -50,6 +53,7 @@ public class AccountController {
         }
     }
 
+    //update user info
     @PutMapping("/user")
     public CommonResponse<String> updateAccount(@RequestBody AccountVO accountVO, HttpServletRequest request) {
         if (accountVO == null) {
@@ -63,6 +67,7 @@ public class AccountController {
         return CommonResponse.createForSuccess("Update Successful");
     }
 
+    //update password
     @PutMapping("/user/password")
     public CommonResponse<String> updatePassword(@RequestBody SignOn signOn, HttpServletRequest request) {
         if (signOn == null) {
@@ -74,5 +79,14 @@ public class AccountController {
         }
         accountService.updatePassword(signOn);
         return CommonResponse.createForSuccess("Update Successful");
+    }
+
+    //check exist
+    @GetMapping("/user")
+    @PassToken
+    public CommonResponse<ObjectNode> exist(@RequestParam String username) {
+        ObjectNode rootNode = new ObjectMapper().createObjectNode();
+        rootNode.put("existence", accountService.exist(username));
+        return CommonResponse.createForSuccess(rootNode);
     }
 }

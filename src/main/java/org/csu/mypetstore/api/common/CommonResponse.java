@@ -38,30 +38,30 @@ public class CommonResponse<T> {
     }
 
     public static <T> CommonResponse<T> createForSuccess() {
-        return new CommonResponse<T>(ResponseCode.SUCCESS.getCode());
+        return new CommonResponse<>(ResponseCode.SUCCESS.getCode());
     }
 
     public static <T> CommonResponse<T> createForSuccess(T data) {
-        return new CommonResponse<T>(ResponseCode.SUCCESS.getCode(), data);
+        return new CommonResponse<>(ResponseCode.SUCCESS.getCode(), data);
     }
 
     public static <T> CommonResponse<T> createForSuccessMessage(String msg) {
-        return new CommonResponse<T>(ResponseCode.SUCCESS.getCode(), msg);
+        return new CommonResponse<>(ResponseCode.SUCCESS.getCode(), msg);
     }
 
     public static <T> CommonResponse<T> createForSuccess(String msg, T data) {
-        return new CommonResponse<T>(ResponseCode.SUCCESS.getCode(), msg, data);
+        return new CommonResponse<>(ResponseCode.SUCCESS.getCode(), msg, data);
     }
 
     public static <T> CommonResponse<T> createForError() {
-        return new CommonResponse<T>(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getDescription());
+        return new CommonResponse<>(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getDescription());
     }
 
     public static <T> CommonResponse<T> createForError(String msg) {
-        return new CommonResponse<T>(ResponseCode.ERROR.getCode(), msg);
+        return new CommonResponse<>(ResponseCode.ERROR.getCode(), msg);
     }
 
     public static <T> CommonResponse<T> createForError(int code, String msg) {
-        return new CommonResponse<T>(code, msg);
+        return new CommonResponse<>(code, msg);
     }
 }
