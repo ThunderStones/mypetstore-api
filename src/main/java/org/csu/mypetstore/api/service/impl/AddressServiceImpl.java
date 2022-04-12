@@ -84,7 +84,9 @@ public class AddressServiceImpl implements AddressService {
         }
         String addressId = address.getAddressId();
         address.setAddressName(getAddressNameById(addressId.substring(0, 2), addressId.substring(2, 4), addressId.substring(4, 6)));
-        addressMapper.update(address, null);
+        UpdateWrapper<Address> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", address.getId());
+        addressMapper.update(address, updateWrapper);
     }
 
     private String getProvinceNameById(String provinceId) {

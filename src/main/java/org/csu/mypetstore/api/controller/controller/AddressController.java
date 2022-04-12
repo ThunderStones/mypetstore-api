@@ -61,4 +61,12 @@ public class AddressController {
         return CommonResponse.createForSuccess(addressService.getAddress(accountVO.getUsername()));
     }
 
+    @PutMapping("")
+    public CommonResponse<String> updateAddress(@RequestBody Address address, HttpServletRequest request) {
+        AccountVO accountVO = (AccountVO) request.getAttribute("account");
+        System.out.println(address);
+        addressService.updateAddress(address);
+        return CommonResponse.createForSuccess("Update address successful.");
+    }
+
 }
