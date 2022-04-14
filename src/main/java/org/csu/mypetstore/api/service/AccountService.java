@@ -17,4 +17,6 @@ public interface AccountService {
     void updatePassword(SignOn signOn);
 
     boolean exist(String username);
+
+    boolean checkPassword(String username, String password);
 }

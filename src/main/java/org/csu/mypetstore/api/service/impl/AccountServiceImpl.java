@@ -113,6 +113,14 @@ public class AccountServiceImpl implements AccountService {
         return accountMapper.selectById(username) != null;
     }
 
+    @Override
+    public boolean checkPassword(String username, String password) {
+        QueryWrapper<SignOn> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        queryWrapper.eq("password", password);
+        return signOnMapper.selectOne(queryWrapper) != null;
+    }
+
     private void accountVOToAccountProfile(AccountVO accountVO, Account account, Profile profile) {
         // if field is null, then use the original value
         account.setEmail(accountVO.getEmail() == null ? account.getEmail() : accountVO.getEmail());

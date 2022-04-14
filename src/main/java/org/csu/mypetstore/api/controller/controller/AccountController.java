@@ -44,7 +44,9 @@ public class AccountController {
     //Register
     @PostMapping("/user")
     @PassToken
-    public CommonResponse<String> getAccount(String username, String password) {
+    public CommonResponse<String> getAccount(@RequestBody SignOn signOn) {
+        String username = signOn.getUsername();
+        String password = signOn.getPassword();
         if (accountService.userExist(username)) {
             return CommonResponse.createForError(ResponseCode.ILLEGAL_ARGUMENT.getCode(), username + " exist.");
         } else {
@@ -69,14 +71,20 @@ public class AccountController {
 
     //update password
     @PutMapping("/user/password")
-    public CommonResponse<String> updatePassword(@RequestBody SignOn signOn, HttpServletRequest request) {
-        if (signOn == null) {
+    public CommonResponse<String> updatePassword(@RequestBody Map<String, String> data, HttpServletRequest request) {
+        System.out.println(data);
+        String password = data.get("password");
+        String oldPassword = data.get("oldPassword");
+        if (password == null || oldPassword == null) {
             return CommonResponse.createForError(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDescription());
         }
         AccountVO oldAccount = (AccountVO) request.getAttribute("account");
-        if (!oldAccount.getUsername().equals(signOn.getUsername())) {
-            return CommonResponse.createForError(ResponseCode.PERMISSION_DENIED.getCode(), ResponseCode.PERMISSION_DENIED.getDescription());
+        if (!accountService.checkPassword(oldAccount.getUsername(), oldPassword)) {
+            return CommonResponse.createForError(ResponseCode.PERMISSION_DENIED.getCode(), "old password error");
         }
+        SignOn signOn = new SignOn();
+        signOn.setUsername(oldAccount.getUsername());
+        signOn.setPassword(password);
         accountService.updatePassword(signOn);
         return CommonResponse.createForSuccess("Update Successful");
     }
